@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerta Epidemiológica: Tos Ferina en Perú 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0066cc;
+            --secondary: #e63946;
+            --accent: #2a9d8f;
+            --light: #f1faee;
+            --dark: #1d3557;
+        }
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(to bottom, #f0f8ff, #e6f2ff);
+            color: #333;
+        }
+        .header-gradient {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            height: 380px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+                max-height: 50vh;
+            }
+            .logo-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .logo-morropon {
+                margin-bottom: 1rem;
+            }
+        }
+        .kpi {
+            color: var(--secondary);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .section-title {
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            padding: 1.8rem;
+            margin-bottom: 2.5rem;
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--accent);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+        .logo-morropon {
+            height: 120px;
+            width: 420px; /* Aumentado 2cm (75px) */
+            max-width: 98vw;
+            object-fit: contain;
+        }
+        .logo-sdsrsmh {
+            height: 120px;
+            max-width: 100%;
+            object-fit: contain;
+        }
+        .logo-redondo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: white;
+            object-fit: cover;
+            border: 3px solid white;
+        }
+        .timeline-dot {
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+            z-index: 2;
+        }
+        .flow-step {
+            background: #f8fafc;
+            border-left: 4px solid var(--accent);
+            padding: 1.2rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .pregnant-step {
+            background: #fffaf5;
+            border-left: 4px solid #ff9e64;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <!-- Logos institucionales -->
+    <div class="logo-container flex items-center justify-center md:justify-between mb-4 mt-6 w-full max-w-6xl mx-auto px-4">
+        <div class="flex items-center">
+            <img src="LOGO EESS MORROPON 80x15mm.png"
+                 alt="Centro de Salud de Referencia I-4 Morropón"
+                 class="logo-morropon" />
+        </div>
+        <div class="hidden md:block"></div>
+        <div class="flex items-center">
+            <img src="SDSRSMH.png"
+                 alt="Sub Región de Salud Morropón Huancabamba"
+                 class="logo-sdsrsmh ml-4" />
+        </div>
+    </div>
+
+    <!-- Audio -->
+    <div class="flex justify-center items-center mb-8 mt-2">
+        <button id="audioBtn" aria-label="Reproducir audio informativo" 
+                class="focus:outline-none bg-white rounded-full shadow-xl p-4 hover:bg-blue-50 transition-all transform hover:scale-105">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#0066cc" class="w-12 h-12">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 6.75v10.5m0 0a3 3 0 006 0V6.75a3 3 0 00-6 0zm0 0H9a2.25 2.25 0 01-2.25-2.25V6.75A2.25 2.25 0 019 4.5h2.25" />
+            </svg>
+        </button>
+        <audio id="audioPlayer" preload="none" src="/audio-tos-ferina.mp3"></audio>
+        <span class="ml-4 text-blue-800 font-bold text-lg">Escuche el mensaje informativo</span>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
+        <header class="text-center mb-12 mt-4">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">PERÚ EN ALERTA:<br><span class="text-blue-700">Resurgimiento de la Tos Ferina 2025</span></h1>
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 max-w-3xl mx-auto rounded">
+                <p class="text-lg font-semibold text-red-700">722 casos confirmados • 12 fallecidos • 25x más que 2024</p>
+            </div>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Sección de KPI -->
+            <div class="lg:col-span-3 card text-center">
+                <h2 class="text-2xl font-bold section-title mb-6">Crisis Epidemiológica en Cifras</h2>
+                <p class="text-gray-700 mb-8 max-w-3xl mx-auto text-lg leading-relaxed">
+                    Al 30 de mayo de 2025, Perú enfrenta el brote más severo de tos ferina en la última década, con un incremento exponencial atribuido a la drástica caída en las coberturas de vacunación post-pandemia.
+                </p>
+                <div class="flex flex-col md:flex-row justify-center items-center space-y-10 md:space-y-0 md:space-x-16">
+                    <div class="text-center">
+                        <p class="text-7xl font-black kpi">722</p>
+                        <p class="text-xl font-bold text-gray-800 mt-2">Casos Reportados</p>
+                        <p class="text-gray-600 font-medium">(hasta mayo 2025)</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-7xl font-black kpi">12</p>
+                        <p class="text-xl font-bold text-gray-800 mt-2">Fallecimientos</p>
+                        <p class="text-gray-600 font-medium">(Niños menores de 5 años)</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-7xl font-black kpi">25×</p>
+                        <p class="text-xl font-bold text-gray-800 mt-2">Más Casos que 2024</p>
+                        <p class="text-gray-600 font-medium">(27 casos en todo 2024)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico histórico -->
+            <div class="lg:col-span-3 card">
+                <h2 class="text-2xl font-bold section-title text-center mb-6">Evolución Histórica: Patrón Alarmante</h2>
+                <p class="text-gray-700 mb-8 text-center max-w-3xl mx-auto text-lg">
+                    La tendencia cíclica natural se ha visto exacerbada por la acumulación de población susceptible debido a la caída en coberturas vacunales durante la pandemia COVID-19.
+                </p>
+                <div class="chart-container">
+                    <canvas id="historicalCasesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Qué es la tos ferina -->
+            <div class="md:col-span-2 lg:col-span-1 card">
+                <h2 class="text-2xl font-bold section-title mb-6">¿Qué es la Tos Ferina?</h2>
+                <p class="text-gray-700 mb-6 text-lg leading-relaxed">
+                    Enfermedad bacteriana respiratoria altamente contagiosa causada por <em class="font-semibold">Bordetella pertussis</em>. Su mayor letalidad se presenta en lactantes no vacunados.
+                </p>
+                <div class="text-center mb-6">
+                    <span class="text-7xl">🦠</span>
+                </div>
+                <div class="space-y-5">
+                    <div class="flex items-start bg-blue-50 p-4 rounded-lg">
+                        <span class="text-2xl mr-3 text-blue-600">➔</span>
+                        <div class="flex-1">
+                            <strong class="text-gray-800 block mb-1">Transmisión:</strong>
+                            <p>Gotículas respiratorias al toser o estornudar</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start bg-blue-50 p-4 rounded-lg">
+                        <span class="text-2xl mr-3 text-blue-600">➔</span>
+                        <div class="flex-1">
+                            <strong class="text-gray-800 block mb-1">Contagio (R0):</strong>
+                            <p>12-17 (más contagiosa que sarampión o influenza)</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start bg-blue-50 p-4 rounded-lg">
+                        <span class="text-2xl mr-3 text-blue-600">➔</span>
+                        <div class="flex-1">
+                            <strong class="text-gray-800 block mb-1">Síntomas:</strong>
+                            <p>Comienza como resfrío, evoluciona a tos paroxística con estridor característico</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Distribución geográfica -->
+            <div class="md:col-span-2 lg:col-span-2 card">
+                <h2 class="text-2xl font-bold section-title text-center mb-6">Distribución Geográfica del Brote</h2>
+                <p class="text-gray-700 mb-8 text-center max-w-3xl mx-auto text-lg">
+                    Loreto concentra el 73% de los casos nacionales, evidenciando las brechas en acceso a servicios de salud y vacunación en zonas rurales.
+                </p>
+                <div class="chart-container">
+                    <canvas id="regionalCasesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Brechas de vacunación -->
+            <div class="md:col-span-2 lg:col-span-2 card">
+                <h2 class="text-2xl font-bold section-title text-center mb-6">Brechas Críticas de Vacunación</h2>
+                <p class="text-gray-700 mb-8 text-center max-w-3xl mx-auto text-lg">
+                    La cobertura de vacunación en 2024 muestra un colapso alarmante, dejando a miles de niños sin protección adecuada.
+                </p>
+                <div class="chart-container">
+                    <canvas id="vaccinationCoverageChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Población vulnerable -->
+            <div class="md:col-span-2 lg:col-span-1 card">
+                <h2 class="text-2xl font-bold section-title mb-6">Población más Vulnerable</h2>
+                <p class="text-gray-700 mb-8 text-lg leading-relaxed">
+                    Los lactantes menores de 6 meses representan el grupo de mayor riesgo, con tasas de hospitalización superiores al 50% y mortalidad elevada.
+                </p>
+                <div class="chart-container mb-6" style="height:280px;">
+                    <canvas id="ageDistributionChart"></canvas>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                    <p class="font-bold text-red-800 text-center">
+                        El <span class="text-2xl">86%</span> de casos en menores de 1 año<br>son lactantes < 6 meses
+                    </p>
+                </div>
+            </div>
+
+            <!-- Esquema de vacunación -->
+            <div class="lg:col-span-3 card">
+                <h2 class="text-2xl font-bold section-title text-center mb-8">Esquema Nacional de Vacunación</h2>
+                <p class="text-gray-700 mb-10 text-center max-w-3xl mx-auto text-lg">
+                    La vacunación es la herramienta más efectiva para prevenir la tos ferina. El esquema peruano es gratuito y está disponible en todos los establecimientos de salud.
+                </p>
+                
+                <div class="w-full max-w-4xl mx-auto">
+                    <div class="relative">
+                        <!-- Línea de tiempo -->
+                        <div class="absolute left-5 top-0 bottom-0 w-1 bg-blue-200 transform translate-x-1/2 z-0"></div>
+                        
+                        <div class="space-y-12 relative">
+                            <h3 class="text-xl font-bold text-blue-800 text-center mb-8">Protección Infantil</h3>
+                            
+                            <div class="flex items-start">
+                                <div class="timeline-dot">1</div>
+                                <div class="ml-10 flow-step">
+                                    <strong class="text-blue-700 text-lg">2, 4 y 6 Meses:</strong>
+                                    <p class="mt-2 text-gray-700">Vacuna Pentavalente (3 dosis). Protege contra difteria, tétanos, tos ferina, hepatitis B y Haemophilus influenzae tipo b.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="timeline-dot">2</div>
+                                <div class="ml-10 flow-step">
+                                    <strong class="text-blue-700 text-lg">18 Meses:</strong>
+                                    <p class="mt-2 text-gray-700">Primer Refuerzo DPT. Fundamental para mantener protección en la primera infancia.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="timeline-dot">3</div>
+                                <div class="ml-10 flow-step">
+                                    <strong class="text-blue-700 text-lg">4 Años:</strong>
+                                    <p class="mt-2 text-gray-700">Segundo Refuerzo DPT. Asegura inmunidad hasta la edad escolar.</p>
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-orange-700 text-center mt-16 mb-8">Protección Materna</h3>
+                            
+                            <div class="flex items-start">
+                                <div class="timeline-dot bg-orange-500">🤰</div>
+                                <div class="ml-10 pregnant-step">
+                                    <strong class="text-orange-700 text-lg">Gestantes (20-36 semanas):</strong>
+                                    <p class="mt-2 text-gray-700">Vacuna Tdap. Transfiere anticuerpos al bebé, brindando protección en los primeros meses de vida.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recomendaciones -->
+            <div class="lg:col-span-3 card">
+                <h2 class="text-2xl font-bold section-title text-center mb-8">Recomendaciones Clave</h2>
+                <p class="text-gray-700 mb-10 text-center max-w-3xl mx-auto text-lg">
+                    Para controlar el brote y prevenir futuras epidemias, se requiere acción coordinada del sistema de salud y la población.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-blue-50 p-7 rounded-xl border-t-4 border-blue-500 transform transition hover:-translate-y-2">
+                        <div class="text-center mb-4">
+                            <span class="text-5xl">💉</span>
+                        </div>
+                        <h3 class="font-bold text-xl mb-3 text-center text-blue-800">Completar Esquemas</h3>
+                        <p class="text-gray-700 text-center">
+                            Verificar que niños reciban todas sus dosis y refuerzos según calendario nacional.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-orange-50 p-7 rounded-xl border-t-4 border-orange-500 transform transition hover:-translate-y-2">
+                        <div class="text-center mb-4">
+                            <span class="text-5xl">👩‍🍼</span>
+                        </div>
+                        <h3 class="font-bold text-xl mb-3 text-center text-orange-800">Vacunación Materna</h3>
+                        <p class="text-gray-700 text-center">
+                            Toda gestante debe recibir Tdap entre las semanas 20-36 de embarazo.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-green-50 p-7 rounded-xl border-t-4 border-green-500 transform transition hover:-translate-y-2">
+                        <div class="text-center mb-4">
+                            <span class="text-5xl">🩺</span>
+                        </div>
+                        <h3 class="font-bold text-xl mb-3 text-center text-green-800">Vigilancia Activa</h3>
+                        <p class="text-gray-700 text-center">
+                            Ante tos persistente en niños, acudir inmediatamente al establecimiento de salud.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="relative mt-16 pt-8 pb-6">
+            <!-- Logo profesional -->
+            <div class="fixed right-6 bottom-6 z-50">
+                <img src="LOGO LITTMAN LUCIANO.jpg"
+                     alt="Dr. Luciano Navarro - Médico Cirujano"
+                     class="logo-redondo"
+                     loading="lazy" />
+            </div>
+            
+            <div class="text-center text-gray-600 text-sm">
+                <p class="font-bold">ACLAS MORROPÓN - Mayo 2025</p>
+                <p>Documento elaborado con datos oficiales del Ministerio de Salud (MINSA)</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Control de audio
+        const audioBtn = document.getElementById('audioBtn');
+        const audioPlayer = document.getElementById('audioPlayer');
+        
+        audioBtn.addEventListener('click', () => {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                audioBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#0066cc" class="w-12 h-12">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
+                    </svg>
+                `;
+            } else {
+                audioPlayer.pause();
+                audioBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#0066cc" class="w-12 h-12">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 6.75v10.5m0 0a3 3 0 006 0V6.75a3 3 0 00-6 0zm0 0H9a2.25 2.25 0 01-2.25-2.25V6.75A2.25 2.25 0 019 4.5h2.25" />
+                    </svg>
+                `;
+            }
+        });
+
+        // Configuración de gráficos
+        document.addEventListener('DOMContentLoaded', () => {
+            const chartColors = {
+                red: '#e63946',
+                blue: '#1d3557',
+                teal: '#2a9d8f',
+                orange: '#f4a261',
+                yellow: '#e9c46a',
+                gray: '#e5e5e5'
+            };
+            
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: { 
+                                family: 'Roboto',
+                                size: 13
+                            },
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(29, 53, 87, 0.9)',
+                        titleFont: { family: 'Roboto', size: 14 },
+                        bodyFont: { family: 'Roboto', size: 13 },
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: 'Roboto', size: 12 } }
+                    },
+                    y: {
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: { font: { family: 'Roboto', size: 12 } }
+                    }
+                }
+            };
+            
+            // Gráfico histórico
+            new Chart(document.getElementById('historicalCasesChart'), {
+                type: 'line',
+                data: {
+                    labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025*'],
+                    datasets: [{
+                        label: 'Casos Totales',
+                        data: [332, 60, 2, 1, 9, 27, 722],
+                        borderColor: chartColors.red,
+                        backgroundColor: 'rgba(230, 57, 70, 0.1)',
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#fff',
+                        pointBorderWidth: 2,
+                        fill: true,
+                        tension: 0.2
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        ...commonOptions.plugins,
+                        title: {
+                            display: true,
+                            text: 'Evolución de Casos de Tos Ferina en Perú (2019-2025)',
+                            font: { size: 16, family: 'Roboto', weight: 'bold' }
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico regional
+            new Chart(document.getElementById('regionalCasesChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Loreto (529)', 'Lima (42)', 'Cajamarca (22)', 'Lambayeque (22)', 'Cusco (17)', 'Arequipa (12)', 'Callao (12)'],
+                    datasets: [{
+                        label: 'Casos Confirmados 2025',
+                        data: [529, 42, 22, 22, 17, 12, 12],
+                        backgroundColor: [
+                            chartColors.red,
+                            chartColors.blue,
+                            chartColors.teal,
+                            chartColors.orange,
+                            chartColors.yellow,
+                            '#457b9d',
+                            '#a8dadc'
+                        ],
+                        borderWidth: 0,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    indexAxis: 'y',
+                    plugins: {
+                        ...commonOptions.plugins,
+                        title: {
+                            display: true,
+                            text: 'Distribución Regional de Casos Confirmados (Mayo 2025)',
+                            font: { size: 16, family: 'Roboto', weight: 'bold' }
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico cobertura vacunación
+            new Chart(document.getElementById('vaccinationCoverageChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Pentavalente 3ª dosis (<1 año)', 'DPT 2º refuerzo (4 años)', 'Tdap Gestantes'],
+                    datasets: [
+                        {
+                            label: 'Cobertura 2023 (%)',
+                            data: [84.3, 57.5, 76.5],
+                            backgroundColor: chartColors.teal,
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Cobertura 2024 (%)',
+                            data: [35.7, 30.5, 40.0],
+                            backgroundColor: chartColors.red,
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        ...commonOptions.scales,
+                        y: {
+                            ...commonOptions.scales.y,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Porcentaje de Cobertura',
+                                font: { size: 13, family: 'Roboto' }
+                            }
+                        }
+                    },
+                    plugins: {
+                        ...commonOptions.plugins,
+                        title: {
+                            display: true,
+                            text: 'Comparación de Coberturas de Vacunación (2023 vs 2024)',
+                            font: { size: 16, family: 'Roboto', weight: 'bold' }
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico distribución por edad
+            new Chart(document.getElementById('ageDistributionChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['0-4 años (346)', '5-9 años (119)', 'Otros (257)'],
+                    datasets: [{
+                        data: [346, 119, 257],
+                        backgroundColor: [chartColors.red, chartColors.orange, chartColors.gray],
+                        borderWidth: 0,
+                        offset: [0, 0, 10]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 12, family: 'Roboto' },
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: commonOptions.plugins.tooltip
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
